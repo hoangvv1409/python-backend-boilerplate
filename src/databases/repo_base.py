@@ -57,35 +57,19 @@ class CRUD(Generic[T]):
 
         return query.first()
 
-    def create_from_specific_schema(
-            self, schema, flush=True, mapping=None, **data):
-        try:
-            obj = schema()
-            for key in data:
-                p = key
-                if mapping and key in mapping:
-                    p = mapping.get(key)
-
-                if hasattr(obj, key):
-                    setattr(obj, key, data[p])
-
-            self.session.add(obj)
-            if flush:
-                self.session.flush()
-            return obj
-        except exc.IntegrityError as e:
-            raise e
-
-    def create(self, flush=True, mapping=None, **data) -> T:
+    def create(self, flush=True, mapping=None, schema=None, **data) -> T:
         try:
             obj = self.model()
+            if schema:
+                obj = schema()
+
             for key in data:
                 p = key
                 if mapping and key in mapping:
                     p = mapping.get(key)
 
-                if hasattr(obj, key):
-                    setattr(obj, key, data[p])
+                if hasattr(obj, p):
+                    setattr(obj, p, data[key])
 
             self.session.add(obj)
             if flush:
