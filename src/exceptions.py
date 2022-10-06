@@ -19,7 +19,6 @@ class AppException(Exception):
 
     def to_json(self):
         res = {
-            'data': self.message,  # deprecated soon
             'error_code': self.error_code,
             'error_message': self.message,
         }
